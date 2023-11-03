@@ -33,7 +33,7 @@ export default {
         color="#1697F6"
         @click="statuChange"
       >
-        <IconCubePlus class="mx-2 pa-1" />
+        <IconCubePlus class="mx-2 " />
         Add New Shipment
       </VBtn>
     </VRow>
