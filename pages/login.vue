@@ -1,7 +1,7 @@
 <script>
 import { signInWithEmailAndPassword } from 'firebase/auth'
+import { auth } from '../store/firebase'
 
-const nuxtApp = useNuxtApp()
 export default {
   data() {
     return {
@@ -19,7 +19,7 @@ export default {
     async login(){
       try {
         await signInWithEmailAndPassword(       
-          nuxtApp.$auth, 
+          auth, 
           this.form.email, 
           this.form.password ).then(data=>{console.log( data )})
       } catch (error) { alert(error)}

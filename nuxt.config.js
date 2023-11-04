@@ -5,8 +5,8 @@ import vuetify from 'vite-plugin-vuetify'
 export default ({
   app: {
     head: {
-      titleTemplate: '%s - NuxtJS Admin Template',
-      title: 'Vuexy',
+      titleTemplate: '%s - By Swellty',
+      title: 'Ecotrack',
     },
   },
 

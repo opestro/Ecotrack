@@ -3,7 +3,7 @@ import { createUserWithEmailAndPassword } from 'firebase/auth'
 
 import { collection } from 'firebase/firestore'
 
-const nuxtApp = useNuxtApp()
+
 export default {
   data() {
     return {
@@ -21,7 +21,7 @@ export default {
     async AddNewUser(){
       try {
         await createUserWithEmailAndPassword(       
-          nuxtApp.$auth, 
+          
           this.form.email, 
           this.form.password ).then(
           data=>{ 
