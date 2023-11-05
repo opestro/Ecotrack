@@ -1,4 +1,4 @@
-<script setup>
+<script lang="ts" setup>
 import navItems from '@/navigation/vertical'
 import { themeConfig } from '@themeConfig'
 
@@ -39,8 +39,6 @@ import { VerticalNavLayout } from '@layouts'
         <UserProfile />
       </div>
     </template>
-
-    
 
     <!-- 👉 Pages -->
     <slot />

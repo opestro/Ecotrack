@@ -1,38 +1,55 @@
-<script setup>
-const props = defineProps({
-  userData: {
-    type: Object,
-    required: false,
-    default: () => ({
-      id: 0,
-      fullName: '',
-      company: '',
-      role: '',
-      username: '',
-      country: '',
-      contact: '',
-      email: '',
-      currentPlan: '',
-      status: '',
-      avatar: '',
-      taskDone: null,
-      projectDone: null,
-      taxId: '',
-      language: '',
-    }),
-  },
-  isDialogVisible: {
-    type: Boolean,
-    required: true,
-  },
+<script setup lang="ts">
+interface UserData {
+  id: number | null
+  fullName: string
+  company: string
+  username: string
+  role: string
+  country: string
+  contact: string
+  email: string
+  currentPlan: string
+  status: string
+  avatar: string
+  taskDone: number | null
+  projectDone: number | null
+  taxId: string
+  language: string
+}
+
+interface Props {
+  userData?: UserData
+  isDialogVisible: boolean
+}
+
+interface Emit {
+  (e: 'submit', value: UserData): void
+  (e: 'update:isDialogVisible', val: boolean): void
+}
+
+const props = withDefaults(defineProps<Props>(), {
+  userData: () => ({
+    id: 0,
+    fullName: '',
+    company: '',
+    role: '',
+    username: '',
+    country: '',
+    contact: '',
+    email: '',
+    currentPlan: '',
+    status: '',
+    avatar: '',
+    taskDone: null,
+    projectDone: null,
+    taxId: '',
+    language: '',
+  }),
 })
 
-const emit = defineEmits([
-  'submit',
-  'update:isDialogVisible',
-])
+const emit = defineEmits<Emit>()
 
-const userData = ref(structuredClone(toRaw(props.userData)))
+const userData = ref<UserData>(structuredClone(toRaw(props.userData)))
 const isUseAsBillingAddress = ref(false)
 
 watch(props, () => {
@@ -46,10 +63,11 @@ const onFormSubmit = () => {
 
 const onFormReset = () => {
   userData.value = structuredClone(toRaw(props.userData))
+
   emit('update:isDialogVisible', false)
 }
 
-const dialogModelValueUpdate = val => {
+const dialogModelValueUpdate = (val: boolean) => {
   emit('update:isDialogVisible', val)
 }
 </script>

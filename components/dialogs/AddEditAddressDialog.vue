@@ -1,32 +1,41 @@
-<script setup>
-const props = defineProps({
-  billingAddress: {
-    type: Object,
-    required: false,
-    default: () => ({
-      companyName: '',
-      billingEmail: '',
-      taxID: '',
-      vatNumber: '',
-      address: '',
-      contact: '',
-      country: null,
-      state: '',
-      zipCode: null,
-    }),
-  },
-  isDialogVisible: {
-    type: Boolean,
-    required: true,
-  },
+<script setup lang="ts">
+interface BillingAddress {
+  companyName: string
+  billingEmail: string
+  taxID: string
+  vatNumber: string
+  address: string
+  contact: string
+  country: string | null
+  state: string
+  zipCode: number | null
+}
+interface Props {
+  billingAddress?: BillingAddress
+  isDialogVisible: boolean
+}
+interface Emit {
+  (e: 'update:isDialogVisible', value: boolean): void
+  (e: 'submit', value: BillingAddress): void
+}
+
+const props = withDefaults(defineProps<Props>(), {
+  billingAddress: () => ({
+    companyName: '',
+    billingEmail: '',
+    taxID: '',
+    vatNumber: '',
+    address: '',
+    contact: '',
+    country: null,
+    state: '',
+    zipCode: null,
+  }),
 })
 
-const emit = defineEmits([
-  'update:isDialogVisible',
-  'submit',
-])
+const emit = defineEmits<Emit>()
 
-const billingAddress = ref(structuredClone(toRaw(props.billingAddress)))
+const billingAddress = ref<BillingAddress>(structuredClone(toRaw(props.billingAddress)))
 
 const resetForm = () => {
   emit('update:isDialogVisible', false)
@@ -42,19 +51,13 @@ const selectedAddress = ref('Home')
 
 const addressTypes = [
   {
-    icon: {
-      icon: 'custom-home',
-      size: '40',
-    },
+    icon: { icon: 'custom-home', size: '40' },
     title: 'Home',
     desc: 'Delivery Time (7am - 9pm)',
     value: 'Home',
   },
   {
-    icon: {
-      icon: 'custom-office',
-      size: '40',
-    },
+    icon: { icon: 'custom-office', size: '40' },
     title: 'Office',
     desc: 'Delivery Time (10am - 6pm)',
     value: 'Office',

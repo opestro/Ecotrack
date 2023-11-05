@@ -1,5 +1,7 @@
-<script setup>
-const themes = [
+<script setup lang="ts">
+import type { ThemeSwitcherTheme } from '@layouts/types'
+
+const themes: ThemeSwitcherTheme[] = [
   {
     name: 'system',
     icon: 'tabler-device-laptop',

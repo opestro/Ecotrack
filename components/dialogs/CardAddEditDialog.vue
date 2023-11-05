@@ -1,29 +1,36 @@
-<script setup>
-const props = defineProps({
-  cardDetails: {
-    type: Object,
-    required: false,
-    default: () => ({
-      number: '',
-      name: '',
-      expiry: '',
-      cvv: '',
-      isPrimary: false,
-      type: '',
-    }),
-  },
-  isDialogVisible: {
-    type: Boolean,
-    required: true,
-  },
+<script setup lang="ts">
+interface Details {
+  number: string
+  name: string
+  expiry: string
+  cvv: string
+  isPrimary: boolean
+  type: string
+}
+interface Emit {
+  (e: 'submit', value: Details): void
+  (e: 'update:isDialogVisible', value: boolean): void
+}
+
+interface Props {
+  cardDetails?: Details
+  isDialogVisible: boolean
+}
+
+const props = withDefaults(defineProps<Props>(), {
+  cardDetails: () => ({
+    number: '',
+    name: '',
+    expiry: '',
+    cvv: '',
+    isPrimary: false,
+    type: '',
+  }),
 })
 
-const emit = defineEmits([
-  'submit',
-  'update:isDialogVisible',
-])
+const emit = defineEmits<Emit>()
 
-const cardDetails = ref(structuredClone(toRaw(props.cardDetails)))
+const cardDetails = ref<Details>(structuredClone(toRaw(props.cardDetails)))
 
 watch(props, () => {
   cardDetails.value = structuredClone(toRaw(props.cardDetails))
@@ -33,7 +40,7 @@ const formSubmit = () => {
   emit('submit', cardDetails.value)
 }
 
-const dialogModelValueUpdate = val => {
+const dialogModelValueUpdate = (val: boolean) => {
   emit('update:isDialogVisible', val)
 }
 </script>

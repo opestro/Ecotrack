@@ -1,12 +1,12 @@
 <!-- Thanks: https://markus.oberlehner.net/blog/transition-to-height-auto-with-vue/ -->
 
-<script>
+<script lang="ts">
 import { Transition } from 'vue'
 
 export default defineComponent({
   name: 'TransitionExpand',
   setup(_, { slots }) {
-    const onEnter = element => {
+    const onEnter = (element: HTMLElement) => {
       const width = getComputedStyle(element).width
 
       element.style.width = width
@@ -36,11 +36,11 @@ export default defineComponent({
       })
     }
 
-    const onAfterEnter = element => {
+    const onAfterEnter = (element: HTMLElement) => {
       element.style.height = 'auto'
     }
 
-    const onLeave = element => {
+    const onLeave = (element: HTMLElement) => {
       const height = getComputedStyle(element).height
 
       element.style.height = height
@@ -49,17 +49,22 @@ export default defineComponent({
       // animation is triggered correctly.
       // eslint-disable-next-line no-unused-expressions
       getComputedStyle(element).height
+
       requestAnimationFrame(() => {
         element.style.height = '0px'
       })
     }
 
-    return () => h(h(Transition), {
-      name: 'expand',
-      onEnter,
-      onAfterEnter,
-      onLeave,
-    }, () => slots.default?.())
+    return () => h(
+      h(Transition),
+      {
+        name: 'expand',
+        onEnter,
+        onAfterEnter,
+        onLeave,
+      },
+      () => slots.default?.(),
+    )
   },
 })
 </script>

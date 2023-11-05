@@ -1,19 +1,14 @@
-<script setup>
-const props = defineProps({
-  mobileNumber: {
-    type: String,
-    required: false,
-  },
-  isDialogVisible: {
-    type: Boolean,
-    required: true,
-  },
-})
-
-const emit = defineEmits([
-  'update:isDialogVisible',
-  'submit',
-])
+<script setup lang="ts">
+interface Emit {
+  (e: 'update:isDialogVisible', value: boolean): void
+  (e: 'submit', value: string): void
+}
+interface Props {
+  mobileNumber?: string
+  isDialogVisible: boolean
+}
+const props = defineProps<Props>()
+const emit = defineEmits<Emit>()
 
 const phoneNumber = ref(structuredClone(toRaw(props.mobileNumber)))
 
@@ -29,7 +24,7 @@ const resetPhoneNumber = () => {
   emit('update:isDialogVisible', false)
 }
 
-const dialogModelValueUpdate = val => {
+const dialogModelValueUpdate = (val: boolean) => {
   emit('update:isDialogVisible', val)
 }
 </script>

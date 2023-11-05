@@ -1,7 +1,8 @@
 <script>
 import { addDoc, collection } from "firebase/firestore"
-import { firestore } from "../../store/firebase"
+import { useFirestore } from 'vuefire'
 
+const db = useFirestore()
 export default  {
   data() {
     return {
@@ -23,7 +24,7 @@ export default  {
       //const nuxtApp = useNuxtApp().$auth
 
       
-      await addDoc(collection(firestore, "Profiles"), {
+      await addDoc(collection(db, "Profiles"), {
         first: "Ada",
         last: "Lovelace",
         born: 1815,

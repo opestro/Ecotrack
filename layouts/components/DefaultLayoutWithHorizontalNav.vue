@@ -1,5 +1,6 @@
-<script setup>
+<script lang="ts" setup>
 import navItems from '@/navigation/horizontal'
+
 import { themeConfig } from '@themeConfig'
 
 // Components
@@ -35,8 +36,6 @@ import { VNodeRenderer } from '@layouts/components/VNodeRenderer'
       <NavbarThemeSwitcher class="me-2" />
       <UserProfile />
     </template>
-
-    
 
     <!-- 👉 Pages -->
     <slot />

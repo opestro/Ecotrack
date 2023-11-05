@@ -1,25 +1,20 @@
-<script setup>
+<script lang="ts" setup>
 import { NuxtLink } from '#components'
-
 
 import { layoutConfig } from '@layouts'
 import { can } from '@layouts/plugins/casl'
-import {
-  getComputedNavLinkToProp,
-  getDynamicI18nProps,
-  isNavLinkActive,
-} from '@layouts/utils'
+import type { NavLink } from '@layouts/types'
+import { getComputedNavLinkToProp, getDynamicI18nProps, isNavLinkActive } from '@layouts/utils'
 
-const props = defineProps({
-  item: {
-    type: null,
-    required: true,
-  },
-  isSubItem: {
-    type: Boolean,
-    required: false,
-    default: false,
-  },
+interface Props {
+  item: NavLink
+
+  // ℹ️ We haven't added this prop in vertical nav because we don't need such differentiation in vertical nav for styling
+  isSubItem?: boolean
+}
+
+const props = withDefaults(defineProps<Props>(), {
+  isSubItem: false,
 })
 </script>
 

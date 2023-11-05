@@ -1,44 +1,50 @@
-<script setup>
-const props = defineProps({
-  items: {
-    type: Array,
-    required: true,
-  },
-  currentStep: {
-    type: Number,
-    required: false,
-    default: 0,
-  },
-  direction: {
-    type: String,
-    required: false,
-    default: 'horizontal',
-  },
-  iconSize: {
-    type: [
-      String,
-      Number,
-    ],
-    required: false,
-    default: 52,
-  },
-  isActiveStepValid: {
-    type: Boolean,
-    required: false,
-    default: undefined,
-  },
-  align: {
-    type: String,
-    required: false,
-    default: 'center',
-  },
+<script setup lang="ts">
+interface Item {
+  title: string
+  icon?: string
+  size?: string
+  subtitle?: string
+}
+
+type Direction = 'vertical' | 'horizontal'
+
+interface Props {
+  items: Item[]
+  currentStep?: number
+  direction?: Direction
+  iconSize?: string | number
+  isActiveStepValid?: boolean
+  align?: 'start' | 'center' | 'end'
+}
+
+interface Emit {
+  (e: 'update:currentStep', value: number): void
+}
+
+const props = withDefaults(defineProps<Props>(), {
+  currentStep: 0,
+  direction: 'horizontal',
+  iconSize: 52,
+  isActiveStepValid: undefined,
+  align: 'center',
 })
 
-const emit = defineEmits(['update:currentStep'])
+const emit = defineEmits<Emit>()
 
 const currentStep = ref(props.currentStep || 0)
-const activeOrCompletedStepsClasses = computed(() => index => index < currentStep.value ? 'stepper-steps-completed' : index === currentStep.value ? 'stepper-steps-active' : '')
-const isHorizontalAndNotLastStep = computed(() => index => props.direction === 'horizontal' && props.items.length - 1 !== index)
+
+// check if step is completed or active and return class name accordingly
+const activeOrCompletedStepsClasses = computed(() => (index: number) => (
+  index < currentStep.value
+    ? 'stepper-steps-completed'
+    : index === currentStep.value ? 'stepper-steps-active' : ''
+))
+
+// check if step is horizontal and not last step
+const isHorizontalAndNotLastStep = computed(() => (index: number) => (
+  props.direction === 'horizontal'
+  && props.items.length - 1 !== index
+))
 
 // check if validation is enabled
 const isValidationEnabled = computed(() => {
@@ -46,8 +52,14 @@ const isValidationEnabled = computed(() => {
 })
 
 watchEffect(() => {
-  if (props.currentStep !== undefined && props.currentStep < props.items.length && props.currentStep >= 0)
+  // we need to check undefined because if we pass 0 as currentStep it will be falsy
+  if (
+    props.currentStep !== undefined
+    && props.currentStep < props.items.length
+    && props.currentStep >= 0
+  )
     currentStep.value = props.currentStep
+
   emit('update:currentStep', currentStep.value)
 })
 </script>

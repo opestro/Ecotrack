@@ -1,40 +1,26 @@
-<script setup>
-const props = defineProps({
-  confirmationQuestion: {
-    type: String,
-    required: true,
-  },
-  isDialogVisible: {
-    type: Boolean,
-    required: true,
-  },
-  confirmTitle: {
-    type: String,
-    required: true,
-  },
-  confirmMsg: {
-    type: String,
-    required: true,
-  },
-  cancelTitle: {
-    type: String,
-    required: true,
-  },
-  cancelMsg: {
-    type: String,
-    required: true,
-  },
-})
+<script setup lang="ts">
+interface Props {
+  confirmationQuestion: string
+  isDialogVisible: boolean
+  confirmTitle: string
+  confirmMsg: string
+  cancelTitle: string
+  cancelMsg: string
+}
 
-const emit = defineEmits([
-  'update:isDialogVisible',
-  'confirm',
-])
+interface Emit {
+  (e: 'update:isDialogVisible', value: boolean): void
+  (e: 'confirm', value: boolean): void
+}
+
+const props = defineProps<Props>()
+
+const emit = defineEmits<Emit>()
 
 const unsubscribed = ref(false)
 const cancelled = ref(false)
 
-const updateModelValue = val => {
+const updateModelValue = (val: boolean) => {
   emit('update:isDialogVisible', val)
 }
 

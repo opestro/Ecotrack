@@ -1,4 +1,4 @@
-<script setup>
+<script setup lang="ts">
 import americanExDark from '@images/icons/payments/img/ae-dark.png'
 import americanExLight from '@images/icons/payments/img/american-express.png'
 import dcDark from '@images/icons/payments/img/dc-dark.png'
@@ -10,96 +10,60 @@ import masterCardLight from '@images/icons/payments/img/mastercard.png'
 import visaDark from '@images/icons/payments/img/visa-dark.png'
 import visaLight from '@images/icons/payments/img/visa-light.png'
 
-const props = defineProps({
-  isDialogVisible: {
-    type: Boolean,
-    required: true,
-  },
-})
-
-const emit = defineEmits(['update:isDialogVisible'])
-
+const props = defineProps<Props>()
+const emit = defineEmits<Emit>()
 const visa = useGenerateImageVariant(visaLight, visaDark)
 const masterCard = useGenerateImageVariant(masterCardLight, masterCardDark)
 const americanEx = useGenerateImageVariant(americanExLight, americanExDark)
 const jcb = useGenerateImageVariant(jcbLight, jcbDark)
 const dc = useGenerateImageVariant(dcLight, dcDark)
 
-const dialogVisibleUpdate = val => {
+interface Props {
+  isDialogVisible: boolean
+}
+
+interface Emit {
+  (e: 'update:isDialogVisible', val: boolean): void
+}
+
+const dialogVisibleUpdate = (val: boolean) => {
   emit('update:isDialogVisible', val)
 }
 
 const paymentProvidersData = [
   {
     title: 'Adyen',
-    providers: [
-      visa,
-      masterCard,
-      americanEx,
-      jcb,
-      dc,
-    ],
+    providers: [visa, masterCard, americanEx, jcb, dc],
   },
   {
     title: '2Checkout',
-    providers: [
-      visa,
-      americanEx,
-      jcb,
-      dc,
-    ],
+    providers: [visa, americanEx, jcb, dc],
   },
   {
     title: 'Airpay',
-    providers: [
-      visa,
-      americanEx,
-      masterCard,
-      jcb,
-    ],
+    providers: [visa, americanEx, masterCard, jcb],
   },
   {
     title: 'Authorize.net',
-    providers: [
-      americanEx,
-      jcb,
-      dc,
-    ],
+    providers: [americanEx, jcb, dc],
   },
   {
     title: 'Bambora',
-    providers: [
-      masterCard,
-      americanEx,
-      jcb,
-    ],
+    providers: [masterCard, americanEx, jcb],
   },
   {
     title: 'Bambora',
-    providers: [
-      visa,
-      masterCard,
-      americanEx,
-      jcb,
-      dc,
-    ],
+    providers: [visa, masterCard, americanEx, jcb, dc],
   },
   {
     title: 'Chase Paymentech (Orbital)',
-    providers: [
-      visa,
-      americanEx,
-      jcb,
-      dc,
-    ],
+    providers: [visa, americanEx, jcb, dc],
   },
   {
     title: 'Checkout.com',
-    providers: [
-      visa,
-      masterCard,
-    ],
+    providers: [visa, masterCard],
   },
+
 ]
 </script>
 

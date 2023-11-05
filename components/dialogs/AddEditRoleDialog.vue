@@ -1,29 +1,38 @@
-<script setup>
+<script setup lang="ts">
 import { VForm } from 'vuetify/components/VForm'
 
-const props = defineProps({
-  rolePermissions: {
-    type: Object,
-    required: false,
-    default: () => ({
-      name: '',
-      permissions: [],
-    }),
-  },
-  isDialogVisible: {
-    type: Boolean,
-    required: true,
-  },
+interface Permission {
+  name: string
+  read: boolean
+  write: boolean
+  create: boolean
+}
+
+interface Roles {
+  name: string
+  permissions: Permission[]
+}
+
+interface Props {
+  rolePermissions?: Roles
+  isDialogVisible: boolean
+}
+interface Emit {
+  (e: 'update:isDialogVisible', value: boolean): void
+  (e: 'update:rolePermissions', value: Roles): void
+}
+
+const props = withDefaults(defineProps<Props>(), {
+  rolePermissions: () => ({
+    name: '',
+    permissions: [],
+  }),
 })
 
-const emit = defineEmits([
-  'update:isDialogVisible',
-  'update:rolePermissions',
-])
-
+const emit = defineEmits<Emit>()
 
 // 👉 Permission List
-const permissions = ref([
+const permissions = ref<Permission[]>([
   {
     name: 'User Management',
     read: false,
@@ -82,21 +91,22 @@ const permissions = ref([
 
 const isSelectAll = ref(false)
 const role = ref('')
-const refPermissionForm = ref()
+const refPermissionForm = ref<VForm>()
 
 const checkedCount = computed(() => {
   let counter = 0
+
   permissions.value.forEach(permission => {
     Object.entries(permission).forEach(([key, value]) => {
       if (key !== 'name' && value)
         counter++
     })
   })
-  
+
   return counter
 })
 
-const isIndeterminate = computed(() => checkedCount.value > 0 && checkedCount.value < permissions.value.length * 3)
+const isIndeterminate = computed(() => checkedCount.value > 0 && checkedCount.value < (permissions.value.length * 3))
 
 // select all
 watch(isSelectAll, val => {
@@ -116,7 +126,7 @@ watch(isIndeterminate, () => {
 
 // if all permissions are checked, then set isSelectAll to true
 watch(permissions, () => {
-  if (checkedCount.value === permissions.value.length * 3)
+  if (checkedCount.value === (permissions.value.length * 3))
     isSelectAll.value = true
 }, { deep: true })
 
@@ -126,13 +136,14 @@ watch(props, () => {
     role.value = props.rolePermissions.name
     permissions.value = permissions.value.map(permission => {
       const rolePermission = props.rolePermissions?.permissions.find(item => item.name === permission.name)
+
       if (rolePermission) {
         return {
           ...permission,
           ...rolePermission,
         }
       }
-      
+
       return permission
     })
   }

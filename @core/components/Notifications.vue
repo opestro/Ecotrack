@@ -1,34 +1,32 @@
-<script setup>
+<script lang="ts" setup>
 import { PerfectScrollbar } from 'vue3-perfect-scrollbar'
+import type { Notification } from '@layouts/types'
 
-const props = defineProps({
-  notifications: {
-    type: Array,
-    required: true,
-  },
-  badgeProps: {
-    type: null,
-    required: false,
-    default: undefined,
-  },
-  location: {
-    type: null,
-    required: false,
-    default: 'bottom end',
-  },
+interface Props {
+  notifications: Notification[]
+  badgeProps?: unknown
+  location?: any
+}
+interface Emit {
+  (e: 'read', value: number[]): void
+  (e: 'unread', value: number[]): void
+  (e: 'remove', value: number): void
+  (e: 'click:notification', value: Notification): void
+}
+
+const props = withDefaults(defineProps<Props>(), {
+  location: 'bottom end',
+  badgeProps: undefined,
 })
 
-const emit = defineEmits([
-  'read',
-  'unread',
-  'remove',
-  'click:notification',
-])
+const emit = defineEmits<Emit>()
 
-const isAllMarkRead = computed(() => props.notifications.some(item => item.isSeen === false))
+const isAllMarkRead = computed(() => props.notifications.some(item => item.isSeen === false),
+)
 
 const markAllReadOrUnread = () => {
   const allNotificationsIds = props.notifications.map(item => item.id)
+
   if (!isAllMarkRead.value)
     emit('unread', allNotificationsIds)
   else

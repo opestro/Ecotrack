@@ -1,30 +1,25 @@
-<script>
+<script setup>
 import { signInWithEmailAndPassword } from 'firebase/auth'
-import { auth } from '../store/firebase'
+import { useFirebaseAuth } from 'vuefire'
 
-export default {
-  data() {
-    return {
-      form: {
-        email: '',
-        password: '',
-        remember: false,
-       
-      },
-      test: "test",
-      isPasswordVisible: false,
-    }
-  },
-  methods: {
-    async login(){
-      try {
-        await signInWithEmailAndPassword(       
-          auth, 
-          this.form.email, 
-          this.form.password ).then(data=>{console.log( data )})
-      } catch (error) { alert(error)}
-    },
-  },
+const auth = useFirebaseAuth()
+
+const form = {
+  email: '',
+  password: '',
+}
+
+const test = 'test'
+const isPasswordVisible = false
+
+async function login() {
+  try {
+    await signInWithEmailAndPassword(
+      auth,
+      form.email,
+      form.password).then(data => { console.log(data) })
+  }
+  catch (error) { console.log(error) }
 }
 </script>
 
@@ -55,49 +50,47 @@ export default {
             Please sign-in to your account and start the adventure
           </p>
         </VCardText>
-        
+
         <VCardText>
-          <VForm @submit.prevent="() => {}">
-            <VRow>
-              <!-- email -->
-              <VCol cols="12">
-                <AppTextField
-                  v-model="form.email"
-                  autofocus
-                  label="Email"
-                  type="email"
-                  placeholder="johndoe@email.com"
-                />
-              </VCol>
+          <VRow>
+            <!-- email -->
+            <VCol cols="12">
+              <AppTextField
+                v-model="form.email"
+                autofocus
+                label="Email"
+                type="email"
+                placeholder="johndoe@email.com"
+              />
+            </VCol>
 
-              <!-- password -->
-              <VCol cols="12">
-                <AppTextField
-                  v-model="form.password"
-                  label="Password"
-                  placeholder="············"
-                  :type="isPasswordVisible ? 'text' : 'password'"
-                  :append-inner-icon="isPasswordVisible ? 'tabler-eye-off' : 'tabler-eye'"
-                  @click:append-inner="isPasswordVisible = !isPasswordVisible"
-                />
+            <!-- password -->
+            <VCol cols="12">
+              <AppTextField
+                v-model="form.password"
+                label="Password"
+                placeholder="············"
+                :type="isPasswordVisible ? 'text' : 'password'"
+                :append-inner-icon="isPasswordVisible ? 'tabler-eye-off' : 'tabler-eye'"
+                @click:append-inner="isPasswordVisible = !isPasswordVisible"
+              />
 
-                <!-- remember me checkbox -->
-                <div class="d-flex align-center justify-space-between flex-wrap mt-2 mb-4">
-                  <VCheckbox
-                    v-model="form.remember"
-                    label="Remember me"
-                  />
-                </div>
-                <!-- login button -->
-                <VBtn
-                  block
-                  @click="login"
-                >
-                  Login
-                </VBtn>
-              </VCol>
-            </VRow>
-          </VForm>
+              <!-- remember me checkbox -->
+              <div class="d-flex align-center justify-space-between flex-wrap mt-2 mb-4">
+                <VCheckbox
+                  v-model="form.remember"
+                  label="Remember me"
+                />
+              </div>
+              <!-- login button -->
+              <VBtn
+                block
+                @click="login"
+              >
+                Login
+              </VBtn>
+            </VCol>
+          </VRow>
         </VCardText>
       </VCard>
     </div>

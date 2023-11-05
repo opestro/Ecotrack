@@ -1,21 +1,16 @@
-<script setup>
+<script setup lang="ts">
 import themeselectionQr from '@images/pages/themeselection-qr.png'
 
-const props = defineProps({
-  authCode: {
-    type: String,
-    required: false,
-  },
-  isDialogVisible: {
-    type: Boolean,
-    required: true,
-  },
-})
-
-const emit = defineEmits([
-  'update:isDialogVisible',
-  'submit',
-])
+interface Emit {
+  (e: 'update:isDialogVisible', value: boolean): void
+  (e: 'submit', value: string): void
+}
+interface Props {
+  authCode?: string
+  isDialogVisible: boolean
+}
+const props = defineProps<Props>()
+const emit = defineEmits<Emit>()
 
 const authCode = ref(structuredClone(toRaw(props.authCode)))
 

@@ -1,20 +1,18 @@
-<script setup>
-const props = defineProps({
-  isDialogVisible: {
-    type: Boolean,
-    required: true,
-  },
-  permissionName: {
-    type: String,
-    required: false,
-    default: '',
-  },
+<script setup lang="ts">
+interface Props {
+  isDialogVisible: boolean
+  permissionName?: string
+}
+interface Emit {
+  (e: 'update:isDialogVisible', value: boolean): void
+  (e: 'update:permissionName', value: string): void
+}
+
+const props = withDefaults(defineProps<Props>(), {
+  permissionName: '',
 })
 
-const emit = defineEmits([
-  'update:isDialogVisible',
-  'update:permissionName',
-])
+const emit = defineEmits<Emit>()
 
 const currentPermissionName = ref('')
 

@@ -1,24 +1,14 @@
-<script setup>
+<script setup lang="tsx">
 import { useStorage } from '@vueuse/core'
 import { PerfectScrollbar } from 'vue3-perfect-scrollbar'
 import { useTheme } from 'vuetify'
 import { staticPrimaryColor } from '@/plugins/vuetify/theme'
-import {
-  Direction,
-  Layout,
-  Skins,
-  Theme,
-} from '@core/enums'
+import { Direction, Layout, Skins, Theme } from '@core/enums'
 import { useConfigStore } from '@core/stores/config'
-import {
-  AppContentLayoutNav,
-  ContentWidth,
-} from '@layouts/enums'
-import {
-  cookieRef,
-  namespaceConfig,
-} from '@layouts/stores/config'
+import { AppContentLayoutNav, ContentWidth } from '@layouts/enums'
+import { cookieRef, namespaceConfig } from '@layouts/stores/config'
 import { themeConfig } from '@themeConfig'
+
 import borderSkinDark from '@images/customizer-icons/border-dark.svg'
 import borderSkinLight from '@images/customizer-icons/border-light.svg'
 import collapsedDark from '@images/customizer-icons/collapsed-dark.svg'
@@ -41,29 +31,35 @@ import wideDark from '@images/customizer-icons/wide-dark.svg'
 import wideLight from '@images/customizer-icons/wide-light.svg'
 
 const isNavDrawerOpen = ref(false)
+
 const configStore = useConfigStore()
+
+// 👉 Primary Color
 const vuetifyTheme = useTheme()
 
-const colors = [
-  staticPrimaryColor,
-  '#0D9394',
-  '#FFAB1D',
-  '#EB3D63',
-  '#2092EC',
-]
-
+const colors = [staticPrimaryColor, '#0D9394', '#FFAB1D', '#EB3D63', '#2092EC']
 const customPrimaryColor = ref('#ffffff')
 
-watch(() => configStore.theme, () => {
-  const cookiePrimaryColor = cookieRef(`${ vuetifyTheme.name.value }ThemePrimaryColor`, null).value
-  if (cookiePrimaryColor && !colors.includes(cookiePrimaryColor))
-    customPrimaryColor.value = cookiePrimaryColor
-}, { immediate: true })
+watch(
+  () => configStore.theme,
+  () => {
+    const cookiePrimaryColor = cookieRef(`${vuetifyTheme.name.value}ThemePrimaryColor`, null).value
 
-const setPrimaryColor = useDebounceFn(color => {
+    if (cookiePrimaryColor && !colors.includes(cookiePrimaryColor))
+      customPrimaryColor.value = cookiePrimaryColor
+  },
+  { immediate: true },
+)
+
+// ℹ️ It will set primary color for current theme only
+const setPrimaryColor = useDebounceFn((color: string) => {
   vuetifyTheme.themes.value[vuetifyTheme.name.value].colors.primary = color
-  cookieRef(`${ vuetifyTheme.name.value }ThemePrimaryColor`, null).value = color
-  useStorage(namespaceConfig('initial-loader-color'), null).value = color
+
+  // ℹ️ We need to store this color value in cookie so vuetify plugin can pick on next reload
+  cookieRef<string | null>(`${vuetifyTheme.name.value}ThemePrimaryColor`, null).value = color
+
+  // ℹ️ Update initial loader color
+  useStorage<string | null>(namespaceConfig('initial-loader-color'), null).value = color
 }, 100)
 
 const lightTheme = useGenerateImageVariant(lightThemeLight, lightThemeDark)
@@ -78,6 +74,7 @@ const wideContent = useGenerateImageVariant(wideLight, wideDark)
 const ltrImg = useGenerateImageVariant(ltrLight, ltrDark)
 const rtlImg = useGenerateImageVariant(rtlLight, rtlDark)
 
+// 👉 Mode
 const themeMode = computed(() => {
   return [
     {
@@ -95,6 +92,7 @@ const themeMode = computed(() => {
   ]
 })
 
+// 👉 Skin
 const themeSkin = computed(() => {
   return [
     {
@@ -110,7 +108,8 @@ const themeSkin = computed(() => {
   ]
 })
 
-const currentLayout = ref(configStore.isVerticalNavCollapsed ? 'collapsed' : configStore.appContentLayoutNav)
+// 👉 Layout
+const currentLayout = ref<'vertical' | 'collapsed' | 'horizontal'>(configStore.isVerticalNavCollapsed ? 'collapsed' : configStore.appContentLayoutNav)
 
 const layouts = computed(() => {
   return [
@@ -136,15 +135,24 @@ watch(currentLayout, () => {
   if (currentLayout.value === 'collapsed') {
     configStore.isVerticalNavCollapsed = true
     configStore.appContentLayoutNav = AppContentLayoutNav.Vertical
-  } else {
+  }
+  else {
     configStore.isVerticalNavCollapsed = false
     configStore.appContentLayoutNav = currentLayout.value
   }
 })
-watch(() => configStore.isVerticalNavCollapsed, () => {
-  currentLayout.value = configStore.isVerticalNavCollapsed ? 'collapsed' : configStore.appContentLayoutNav
-})
 
+// watch vertical sidebar collapse state
+watch(
+  () => configStore.isVerticalNavCollapsed,
+  () => {
+    currentLayout.value = configStore.isVerticalNavCollapsed
+      ? 'collapsed'
+      : configStore.appContentLayoutNav
+  },
+)
+
+// 👉 Content Width
 const contentWidth = computed(() => {
   return [
     {
@@ -160,6 +168,7 @@ const contentWidth = computed(() => {
   ]
 })
 
+// 👉 Direction
 const currentDir = ref(configStore.isAppRTL ? 'rtl' : 'ltr')
 
 const direction = computed(() => {
@@ -180,16 +189,19 @@ const direction = computed(() => {
 watch(currentDir, () => {
   if (currentDir.value === 'rtl')
     configStore.isAppRTL = true
+
   else
     configStore.isAppRTL = false
 })
 
+// check if any value set in cookie
 const isCookieHasAnyValue = ref(false)
+
 const { locale } = useI18n({ useScope: 'global' })
 
 const isActiveLangRTL = computed(() => {
   const lang = themeConfig.app.i18n.langConfig.find(l => l.i18nLang === locale.value)
-  
+
   return lang?.isRTL ?? false
 })
 
@@ -223,15 +235,16 @@ watch([
   ]
 
   currentDir.value = configStore.isAppRTL ? 'rtl' : 'ltr'
-  isCookieHasAnyValue.value = JSON.stringify(themeConfigValue) !== JSON.stringify(initialConfigValue)
-}, {
-  deep: true,
-  immediate: true,
-})
 
+  isCookieHasAnyValue.value = JSON.stringify(themeConfigValue) !== JSON.stringify(initialConfigValue)
+}, { deep: true, immediate: true })
+
+// remove all theme related values from localStorage
 const resetCustomizer = async () => {
+  // reset themeConfig values
   vuetifyTheme.themes.value.light.colors.primary = staticPrimaryColor
   vuetifyTheme.themes.value.dark.colors.primary = staticPrimaryColor
+
   configStore.theme = themeConfig.app.theme
   configStore.skin = themeConfig.app.skin
   configStore.isVerticalNavSemiDark = themeConfig.verticalNav.isVerticalNavSemiDark
@@ -239,12 +252,16 @@ const resetCustomizer = async () => {
   configStore.appContentWidth = themeConfig.app.contentWidth
   configStore.isAppRTL = isActiveLangRTL.value
   configStore.isVerticalNavCollapsed = themeConfig.verticalNav.isVerticalNavCollapsed
-  useStorage(namespaceConfig('initial-loader-color'), null).value = staticPrimaryColor
+  useStorage<string | null>(namespaceConfig('initial-loader-color'), null).value = staticPrimaryColor
   currentLayout.value = 'vertical'
+
   cookieRef('lightThemePrimaryColor', null).value = null
   cookieRef('darkThemePrimaryColor', null).value = null
+
   await nextTick()
+
   isCookieHasAnyValue.value = false
+
   customPrimaryColor.value = '#ffffff'
 }
 </script>

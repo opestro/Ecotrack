@@ -1,22 +1,15 @@
-<script setup>
+<script lang="ts" setup>
 import { NuxtLink } from '#components'
-
 
 import { layoutConfig } from '@layouts'
 import { can } from '@layouts/plugins/casl'
 import { useLayoutConfigStore } from '@layouts/stores/config'
-import {
-  getComputedNavLinkToProp,
-  getDynamicI18nProps,
-  isNavLinkActive,
-} from '@layouts/utils'
+import type { NavLink } from '@layouts/types'
+import { getComputedNavLinkToProp, getDynamicI18nProps, isNavLinkActive } from '@layouts/utils'
 
-const props = defineProps({
-  item: {
-    type: null,
-    required: true,
-  },
-})
+defineProps<{
+  item: NavLink
+}>()
 
 const configStore = useLayoutConfigStore()
 const hideTitleAndBadge = configStore.isVerticalNavMini()

@@ -1,106 +1,72 @@
-<script setup>
-import {
-  computePosition,
-  flip,
-  shift,
-} from '@floating-ui/dom'
+<script lang="ts" setup>
+import type { ReferenceElement } from '@floating-ui/dom'
+import { computePosition, flip, shift } from '@floating-ui/dom'
 import { useLayoutConfigStore } from '@layouts/stores/config'
 import { themeConfig } from '@themeConfig'
 
-const props = defineProps({
-  popperInlineEnd: {
-    type: Boolean,
-    required: false,
-    default: false,
-  },
-  tag: {
-    type: String,
-    required: false,
-    default: 'div',
-  },
-  contentContainerTag: {
-    type: String,
-    required: false,
-    default: 'div',
-  },
-  isRtl: {
-    type: Boolean,
-    required: false,
-  },
+interface Props {
+  popperInlineEnd?: boolean
+  tag?: string
+  contentContainerTag?: string
+  isRtl?: boolean
+}
+
+const props = withDefaults(defineProps<Props>(), {
+  popperInlineEnd: false,
+  tag: 'div',
+  contentContainerTag: 'div',
+  isRTL: false,
 })
 
 const configStore = useLayoutConfigStore()
-const refPopperContainer = ref()
-const refPopper = ref()
+const refPopperContainer = ref<ReferenceElement>()
+const refPopper = ref<HTMLElement>()
 
 const popperContentStyles = ref({
   left: '0px',
   top: '0px',
-
-  /*ℹ️ Why we are not using fixed positioning?
-
-`position: fixed` doesn't work as expected when some CSS properties like `transform` is applied on its parent element.
-Docs: https://developer.mozilla.org/en-US/docs/Web/CSS/position#values <= See `fixed` value description
-
-Hence, when we use transitions where transition apply `transform` on its parent element, fixed positioning will not work.
-(Popper content moves away from the element when parent element transition)
-
-To avoid this, we use `position: absolute` instead of `position: fixed`.
-
-NOTE: This issue starts from third level children (Top Level > Sub item > Sub item).
-*/
-
-// strategy: 'fixed',
 })
 
 const updatePopper = async () => {
   if (refPopperContainer.value !== undefined && refPopper.value !== undefined) {
-    const { x, y } = await computePosition(refPopperContainer.value, refPopper.value, {
-      placement: props.popperInlineEnd ? props.isRtl ? 'left-start' : 'right-start' : 'bottom-start',
-      middleware: [
-        flip({ boundary: document.querySelector('body') }),
-        shift({ boundary: document.querySelector('body') }),
-      ],
+    const { x, y } = await computePosition(refPopperContainer.value,
+      refPopper.value, {
+        placement: props.popperInlineEnd ? (props.isRtl ? 'left-start' : 'right-start') : 'bottom-start',
+        middleware: [
 
-      /*ℹ️ Why we are not using fixed positioning?
+          flip({ boundary: document.querySelector('body')! }),
 
-`position: fixed` doesn't work as expected when some CSS properties like `transform` is applied on its parent element.
-Docs: https://developer.mozilla.org/en-US/docs/Web/CSS/position#values <= See `fixed` value description
+          shift({ boundary: document.querySelector('body')! }),
+        ],
 
-Hence, when we use transitions where transition apply `transform` on its parent element, fixed positioning will not work.
-(Popper content moves away from the element when parent element transition)
+        /*
+      ℹ️ Why we are not using fixed positioning?
 
-To avoid this, we use `position: absolute` instead of `position: fixed`.
+      `position: fixed` doesn't work as expected when some CSS properties like `transform` is applied on its parent element.
+      Docs: https://developer.mozilla.org/en-US/docs/Web/CSS/position#values <= See `fixed` value description
 
-NOTE: This issue starts from third level children (Top Level > Sub item > Sub item).
-*/
+      Hence, when we use transitions where transition apply `transform` on its parent element, fixed positioning will not work.
+      (Popper content moves away from the element when parent element transition)
 
-      // strategy: 'fixed',
-    })
+      To avoid this, we use `position: absolute` instead of `position: fixed`.
 
-    popperContentStyles.value.left = `${ x }px`
-    popperContentStyles.value.top = `${ y }px`
+      NOTE: This issue starts from third level children (Top Level > Sub item > Sub item).
+    */
+        // strategy: 'fixed',
+      })
+
+    popperContentStyles.value.left = `${x}px`
+    popperContentStyles.value.top = `${y}px`
   }
 }
 
-until(() => configStore.horizontalNavType).toMatch(type => type === 'static').then(() => {
-  useEventListener('scroll', updatePopper)
-
-  /*ℹ️ Why we are not using fixed positioning?
-
-`position: fixed` doesn't work as expected when some CSS properties like `transform` is applied on its parent element.
-Docs: https://developer.mozilla.org/en-US/docs/Web/CSS/position#values <= See `fixed` value description
-
-Hence, when we use transitions where transition apply `transform` on its parent element, fixed positioning will not work.
-(Popper content moves away from the element when parent element transition)
-
-To avoid this, we use `position: absolute` instead of `position: fixed`.
-
-NOTE: This issue starts from third level children (Top Level > Sub item > Sub item).
+/*
+ 💡 Only add scroll event listener for updating position once horizontal nav is made static.
+  We don't want to update position every time user scrolls when horizontal nav is sticky
 */
-
-// strategy: 'fixed',
-})
+until(() => configStore.horizontalNavType)
+  .toMatch(type => type === 'static')
+  .then(() => { useEventListener('scroll', updatePopper) })
 
 const isContentShown = ref(false)
 
@@ -116,10 +82,13 @@ const hideContent = () => {
 onMounted(updatePopper)
 
 // ℹ️ Recalculate popper position when it's triggerer changes its position
-watch([
-  () => configStore.isAppRTL,
-  () => configStore.appContentWidth,
-], updatePopper)
+watch(
+  [
+    () => configStore.isAppRTL,
+    () => configStore.appContentWidth,
+  ],
+  updatePopper,
+)
 
 // Watch for route changes and close popper content if route is changed
 const route = useRoute()

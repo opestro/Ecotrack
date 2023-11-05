@@ -1,49 +1,18 @@
-<script setup>
+<script setup lang="ts">
 import safeBoxWithGoldenCoin from '@images/misc/3d-safe-box-with-golden-dollar-coins.png'
 import spaceRocket from '@images/misc/3d-space-rocket-with-smoke.png'
 import dollarCoinPiggyBank from '@images/misc/dollar-coins-flying-pink-piggy-bank.png'
 
-const props = defineProps({
-  title: {
-    type: String,
-    required: false,
-  },
-  xs: {
-    type: [
-      Number,
-      String,
-    ],
-    required: false,
-  },
-  sm: {
-    type: [
-      Number,
-      String,
-    ],
-    required: false,
-  },
-  md: {
-    type: [
-      String,
-      Number,
-    ],
-    required: false,
-  },
-  lg: {
-    type: [
-      String,
-      Number,
-    ],
-    required: false,
-  },
-  xl: {
-    type: [
-      String,
-      Number,
-    ],
-    required: false,
-  },
-})
+interface Pricing {
+  title?: string
+  xs?: number | string
+  sm?: number | string
+  md?: string | number
+  lg?: string | number
+  xl?: string | number
+}
+
+const props = defineProps<Pricing>()
 
 const annualMonthlyPlanPriceToggler = ref(true)
 

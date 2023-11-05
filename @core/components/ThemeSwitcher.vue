@@ -1,20 +1,23 @@
-<script setup>
+<script setup lang="ts">
 import { useConfigStore } from '@core/stores/config'
+import type { ThemeSwitcherTheme } from '@layouts/types'
 
-const props = defineProps({
-  themes: {
-    type: Array,
-    required: true,
-  },
-})
+const props = defineProps<{
+  themes: ThemeSwitcherTheme[]
+}>()
 
 const configStore = useConfigStore()
+
 const selectedItem = ref([configStore.theme])
 
 // Update icon if theme is changed from other sources
-watch(() => configStore.theme, () => {
-  selectedItem.value = [configStore.theme]
-}, { deep: true })
+watch(
+  () => configStore.theme,
+  () => {
+    selectedItem.value = [configStore.theme]
+  },
+  { deep: true },
+)
 </script>
 
 <template>

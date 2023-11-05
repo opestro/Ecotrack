@@ -1,12 +1,13 @@
-<script setup>
-const props = defineProps({
-  title: {
-    type: String,
-    required: true,
-  },
-})
+<script setup lang="ts">
+interface Props {
+  title: string
+}
+interface Emit {
+  (e: 'cancel', el: MouseEvent): void
+}
+const props = defineProps<Props>()
 
-const emit = defineEmits(['cancel'])
+defineEmits<Emit>()
 </script>
 
 <template>

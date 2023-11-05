@@ -1,4 +1,4 @@
-<script setup>
+<script setup lang="ts">
 import avatar1 from '@images/avatars/avatar-1.png'
 import avatar2 from '@images/avatars/avatar-2.png'
 import avatar3 from '@images/avatars/avatar-3.png'
@@ -8,20 +8,32 @@ import avatar6 from '@images/avatars/avatar-6.png'
 import avatar7 from '@images/avatars/avatar-7.png'
 import avatar8 from '@images/avatars/avatar-8.png'
 
-const props = defineProps({
-  isDialogVisible: {
-    type: Boolean,
-    required: true,
-  },
-})
+interface Props {
+  isDialogVisible: boolean
+}
 
-const emit = defineEmits(['update:isDialogVisible'])
+interface Emit {
+  (e: 'update:isDialogVisible', val: boolean): void
+}
 
-const dialogVisibleUpdate = val => {
+const props = defineProps<Props>()
+
+const emit = defineEmits<Emit>()
+
+const dialogVisibleUpdate = (val: boolean) => {
   emit('update:isDialogVisible', val)
 }
 
-const membersList = [
+type Permission = 'Owner' | 'Can Edit' | 'Can Comment' | 'Can View'
+
+interface Member {
+  avatar: string
+  name: string
+  email: string
+  permission: Permission
+}
+
+const membersList: Member[] = [
   {
     avatar: avatar1,
     name: 'Lester Palmer',

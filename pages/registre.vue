@@ -1,9 +1,10 @@
 <script>
 import { createUserWithEmailAndPassword } from 'firebase/auth'
+import { doc, setDoc } from 'firebase/firestore'
+import { useFirebaseAuth, useFirestore } from 'vuefire'
 
-import { collection } from 'firebase/firestore'
-
-
+const auth = useFirebaseAuth()
+const db = useFirestore()
 export default {
   data() {
     return {
@@ -11,7 +12,12 @@ export default {
         email: '',
         password: '',
         remember: false,
-       
+        firstName: '',
+        lastName: '',
+        city: '',
+        company: '',
+        phoneNumber: '',
+        userStatus: '',
       },
       test: "test",
       isPasswordVisible: false,
@@ -20,20 +26,25 @@ export default {
   methods: {
     async AddNewUser(){
       try {
-        await createUserWithEmailAndPassword(       
-          
+        await createUserWithEmailAndPassword(   
+          auth,    
           this.form.email, 
           this.form.password ).then(
           data=>{ 
             console.log( data.user.uid )
             
-            nuxtApp.$firestore
-            collection("Profiles").get().then(dad => {
-              console.log("Document successfully written!" + dad)
-            })
-              .catch(error => {
-                console.error("Error writing document: ", error)
-              })
+            setDoc(doc(db, "users", data.user.uid), {
+              email: this.form.email,
+              firstName: this.form.email,
+              lastName: this.form.lastName,
+              city: this.form.city,
+              company: this.form.company,
+              phoneNumber: this.form.phoneNumber,
+              userStatus: this.form.userStatus,
+              uid: data.user.uid,
+            }).then(data=>{
+              console.log("Document written with ID: ", data)
+            }).catch(error=>{console.log("Error: ", error)})
           },
         )
       } catch (error) { alert(error)}

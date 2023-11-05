@@ -1,16 +1,20 @@
-<script setup>
+<script setup lang="ts">
 import { PerfectScrollbar } from 'vue3-perfect-scrollbar'
 
-const props = defineProps({
-  togglerIcon: {
-    type: String,
-    required: false,
-    default: 'tabler-layout-grid-add',
-  },
-  shortcuts: {
-    type: Array,
-    required: true,
-  },
+interface Shortcut {
+  icon: string
+  title: string
+  subtitle: string
+  to: object | string
+}
+
+interface Props {
+  togglerIcon?: string
+  shortcuts: Shortcut[]
+}
+
+const props = withDefaults(defineProps<Props>(), {
+  togglerIcon: 'tabler-layout-grid-add',
 })
 
 const router = useRouter()

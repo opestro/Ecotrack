@@ -1,22 +1,13 @@
-<script setup>
-const props = defineProps({
-  title: {
-    type: String,
-    required: true,
-  },
-  color: {
-    type: String,
-    required: false,
-    default: 'primary',
-  },
-  icon: {
-    type: String,
-    required: true,
-  },
-  stats: {
-    type: String,
-    required: true,
-  },
+<script setup lang="ts">
+interface Props {
+  title: string
+  color?: string
+  icon: string
+  stats: string
+}
+
+const props = withDefaults(defineProps<Props>(), {
+  color: 'primary',
 })
 </script>
 

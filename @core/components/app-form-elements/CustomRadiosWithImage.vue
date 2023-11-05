@@ -1,22 +1,20 @@
-<script setup>
-const props = defineProps({
-  selectedRadio: {
-    type: String,
-    required: true,
-  },
-  radioContent: {
-    type: Array,
-    required: true,
-  },
-  gridColumn: {
-    type: null,
-    required: false,
-  },
-})
+<script lang="ts" setup>
+import type { GridColumn } from '@core/types'
 
-const emit = defineEmits(['update:selectedRadio'])
+interface Props {
+  selectedRadio: string
+  radioContent: { bgImage: string | undefined; value: string; label?: string }[]
+  gridColumn?: GridColumn
+}
 
-const updateSelectedOption = value => {
+interface Emit {
+  (e: 'update:selectedRadio', value: string): void
+}
+
+const props = defineProps<Props>()
+const emit = defineEmits<Emit>()
+
+const updateSelectedOption = (value: string) => {
   emit('update:selectedRadio', value)
 }
 </script>

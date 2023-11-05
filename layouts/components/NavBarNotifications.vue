@@ -1,10 +1,12 @@
-<script setup>
+<script lang="ts" setup>
+import type { Notification } from '@layouts/types'
+
 import avatar3 from '@images/avatars/avatar-3.png'
 import avatar4 from '@images/avatars/avatar-4.png'
 import avatar5 from '@images/avatars/avatar-5.png'
 import paypal from '@images/svg/paypal.svg'
 
-const notifications = ref([
+const notifications = ref<Notification[]>([
   {
     id: 1,
     img: avatar4,
@@ -48,14 +50,14 @@ const notifications = ref([
   },
 ])
 
-const removeNotification = notificationId => {
+const removeNotification = (notificationId: number) => {
   notifications.value.forEach((item, index) => {
     if (notificationId === item.id)
       notifications.value.splice(index, 1)
   })
 }
 
-const markRead = notificationId => {
+const markRead = (notificationId: number[]) => {
   notifications.value.forEach(item => {
     notificationId.forEach(id => {
       if (id === item.id)
@@ -64,7 +66,7 @@ const markRead = notificationId => {
   })
 }
 
-const markUnRead = notificationId => {
+const markUnRead = (notificationId: number[]) => {
   notifications.value.forEach(item => {
     notificationId.forEach(id => {
       if (id === item.id)
@@ -73,7 +75,7 @@ const markUnRead = notificationId => {
   })
 }
 
-const handleNotificationClick = notification => {
+const handleNotificationClick = (notification: Notification) => {
   if (!notification.isSeen)
     markRead([notification.id])
 }
